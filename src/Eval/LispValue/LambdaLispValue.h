@@ -16,7 +16,7 @@ public:
         this->parameters = parameters;
         this->body = body;
     }
-    LispValue* take_operation(list<Level2Token*> args, eval eval_call) override {
+    LispValue* take_operation(list<LispValue*> args, eval eval_call) override {
         // TODO here I want manually substitute parameters with arguments in lambda body.
         // But what if better way is implement eval frames here?
         // So for example if I want to eval ((lambda (x y) (+ x y)) 3 5) it's
@@ -25,7 +25,8 @@ public:
         // another x and y so simply substituting them will be wrong
 
         Frame frame;
-        list<Level2Token*>:: iterator param_it, args_it;
+        list<Level2Token*>::iterator param_it;
+        list<LispValue*>::iterator args_it;
         param_it = parameters.begin();
         for (args_it = args.begin(); args_it != args.end(); ++args_it, ++param_it) {
             frame.Define((*param_it)->get_identif_val(), (*args_it));

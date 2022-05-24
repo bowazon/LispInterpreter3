@@ -10,7 +10,7 @@ public:
     ErrorLispValue(string msg) {
         this->msg = msg;
     }
-    LispValue* take_operation(list<Level2Token*> op, eval eval_call) override { // TODO now it's superstupids
+    LispValue* take_operation(list<LispValue*> operands, eval eval_call) override { // TODO now it's superstupids
         return nullptr;
     }
     string to_string() override {

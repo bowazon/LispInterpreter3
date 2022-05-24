@@ -13,11 +13,11 @@ class NotThatValueException : public std::exception {};
 class LispValue;
 
 typedef LispValue* (*eval) (list<Level2Token*>, Frame* frame);
-typedef LispValue* (*ReservedProc) (list<Level2Token*> l);
+typedef LispValue* (*ReservedProc) (list<LispValue*> l);
 
 class LispValue {
 public:
-    virtual LispValue* take_operation(list<Level2Token*> op, eval eval_call) = 0;
+    virtual LispValue* take_operation(list<LispValue*> operands, eval eval_call) = 0;
     virtual string to_string() = 0;
 };
 
