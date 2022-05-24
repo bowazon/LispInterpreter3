@@ -12,7 +12,7 @@ class LispValue;
 
 class Frame {
 private:
-    map<string, LispValue*> name_to_token_map;
+    map<string, LispValue*> name_to_value_map;
     Frame* parent_frame;
 public:
     Frame() {
@@ -25,13 +25,13 @@ public:
         return parent_frame;
     }
     void Define(string name, LispValue* value) {
-        name_to_token_map.insert({name, value});
+        name_to_value_map.insert({name, value});
     }
     LispValue* FindDefinition(string name) { // TODO should we search in parent frames????
-        return (name_to_token_map.find(name))->second;
+        return (name_to_value_map.find(name))->second;
     }
     bool Contains(string name) {
-        return name_to_token_map.find(name) != name_to_token_map.end();
+        return name_to_value_map.find(name) != name_to_value_map.end();
     }
 };
 

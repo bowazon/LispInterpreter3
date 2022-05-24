@@ -17,6 +17,12 @@ typedef LispValue* (*ReservedProc) (list<LispValue*> l);
 
 class LispValue {
 public:
+    virtual string to_string() = 0;
+};
+
+// For reserved procedures and lambdas
+class ProcedureLispValue : public LispValue {
+public:
     virtual LispValue* take_operation(list<LispValue*> operands, eval eval_call) = 0;
     virtual string to_string() = 0;
 };

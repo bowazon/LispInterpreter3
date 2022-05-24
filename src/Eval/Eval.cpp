@@ -17,7 +17,6 @@ bool IsBuiltIn(string s) {
     return s.compare("+") == 0;
 }
 
-// TODO I think it shouldn't carry eval() because otherwise it should also carry frames.
 LispValue* plusProc(list<LispValue*> tokens) {
     list<LispValue*>::iterator it;
     int val = 0;
@@ -39,12 +38,13 @@ bool IsLambda(string s) {
 bool IsLambda(Level2Token* token) {
     return IsLambda(next(token->get_unparsed_list().begin())->get_content());
 }
-/*
-LispValue* apply(Level2Token* op, list<Level2Token*> tokens, Frame* frame); // TODO apply shouldn't
-                                                                          // carry frame
-                                                              // or should? it calls eval()
-*/
+
 Frame GlobalEnvironment;
+
+// TODO so Lisp Value is really XLispValue.h (implementation of value) and
+// IsX(s) method that finds out is this string X.
+// This is not the case with Lambda where examined "s" is not a string
+// but ... wait...
 
 LispValue* eval(list<Level2Token*> tokens, Frame* frame) {
     if (tokens.size() == 1) {
@@ -65,31 +65,32 @@ LispValue* eval(list<Level2Token*> tokens, Frame* frame) {
                 // we should search in previous frame instead of in GlobalEnvironment
                 if (GlobalEnvironment.Contains(s)) return GlobalEnvironment.FindDefinition(s);
             }
-        } else if (IsLambda(crnt)) {
-            list<Level2Token*> lambda = Level2Parser::Parse(tokens.front()->get_unparsed_list());
-            list<Level2Token*> params = Level2Parser::Parse((*next(lambda.begin()))->get_unparsed_list());
-            list<Level2Token*> args = Level2Parser::Parse((*next(next(lambda.begin())))->get_unparsed_list());
-            return new LambdaLispValue(params, args);
         } else {
             return eval(Level2Parser::Parse(tokens.front()->get_unparsed_list()), frame);
         }
     } else {
-        // this is sort of apply() section
-        list<Level2Token*>::iterator it;
-        list<LispValue*> operands_values;
-        for (it = next(tokens.begin()); it != tokens.end(); ++ it) {
-            operands_values.push_back(eval(list<Level2Token*>(1, *it), frame));
+        if (tokens.front()->get_type() == Level2TokenType::kIdentifier &&
+                IsLambda(tokens.front()->get_identif_val())) {
+            list<Level2Token*> params = Level2Parser::Parse((*next(tokens.begin()))->get_unparsed_list());
+            list<Level2Token*> args = Level2Parser::Parse((*next(next(tokens.begin())))->get_unparsed_list());
+            return new LambdaLispValue(params, args);
+        } else {
+            // finally, sort of apply() section
+            list<Level2Token*>::iterator it;
+            list<LispValue*> operands_values;
+            for (it = next(tokens.begin()); it != tokens.end(); ++ it) {
+                operands_values.push_back(eval(list<Level2Token*>(1, *it), frame));
+            }
+            ProcedureLispValue* operat = dynamic_cast<ProcedureLispValue*>(eval(list<Level2Token*>(1, tokens.front()), frame));
+            if (operat == nullptr) {
+                return new ErrorLispValue("Not procedure");
+            }
+            return operat->take_operation(operands_values, eval);
         }
-        return eval(list<Level2Token*>(1, tokens.front()), frame)->take_operation(operands_values, eval);
     }
 
     return new ErrorLispValue("Unknown problem");
 }
-/*
-LispValue* apply(Level2Token* op, list<Level2Token*> operands, Frame* frame) {
-    return eval(list<Level2Token*>(1, op), frame)->take_operation(operands, eval);
-}
- */
 
 void InterpreterCall(string expression) {
     list<Level2Token*> to_eval = Level2Parser::Parse(Level1Parser::Parse(expression));

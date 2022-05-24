@@ -7,7 +7,7 @@
 #include "../../Level2Parser/Level2Parser.h"
 #include "../../Level1Parser/Level1Parser.h"
 
-class LambdaLispValue : public LispValue {
+class LambdaLispValue : public ProcedureLispValue {
 public:
     list<Level2Token*> parameters;
     list<Level2Token*> body;
@@ -40,7 +40,17 @@ public:
         return new ErrorLispValue("tmp");
     }
     string to_string() override {
-        return "lambda";
+        string str_params, str_body;
+        list<Level2Token*>::iterator it;
+        for(it = parameters.begin(); it != parameters.end(); ++it) {
+            str_params.append((*it)->to_string());
+            str_params.append(" ");
+        }
+        for(it = body.begin(); it != body.end(); ++it) {
+            str_body.append((*it)->to_string());
+            str_body.append(" ");
+        }
+        return "lambda on params: " + str_params + "; body: " + str_body;
     }
 };
 

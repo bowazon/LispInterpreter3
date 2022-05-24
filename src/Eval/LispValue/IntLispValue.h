@@ -10,9 +10,8 @@ public:
     IntLispValue(int val) {
         this->val = val;
     }
-    int get_val() {return val;}
-    LispValue* take_operation(list<LispValue*> operands, eval eval_call) override { // TODO now it's superstupids
-        return nullptr;
+    int get_val() {
+        return val;
     }
     string to_string() override {
         return std::to_string(val);
