@@ -3,10 +3,12 @@
 #include "../Level2Parser/Level2Parser.h"
 #include "../Helper.h"
 #include "LispValue.h"
-#include "LispValue/IntLispValue.h"
+#include "LispValue/NumberLispValue.h"
 #include "LispValue/ReservedProcedureLispValue.h"
 #include "LispValue/LambdaLispValue.h"
 #include "Frame.h"
+#include "Reserved.h"
+#include "LispValue/BooleanLispValue.h"
 #include <iostream>
 
 //using namespace std;
@@ -17,26 +19,16 @@ bool IsBuiltIn(string s) {
     return s.compare("+") == 0;
 }
 
-LispValue* plusProc(list<LispValue*> tokens) {
-    list<LispValue*>::iterator it;
-    int val = 0;
-    for (it = tokens.begin(); it != tokens.end(); ++it) {
-        //Level2Token* crnt_token = *it;
-        IntLispValue* number = dynamic_cast<IntLispValue *>(*it);
-        if (number == nullptr)
-            throw NotThatValueException(); // or return ErrorLispValue
-        val += number->get_val();
-    }
-
-    return new IntLispValue(val);
-}
-
 bool IsLambda(string s) {
     return s.compare("lambda") == 0;
 }
 
 bool IsLambda(Level2Token* token) {
     return IsLambda(next(token->get_unparsed_list().begin())->get_content());
+}
+
+bool IsBuiltInFunction(string s) {
+    return ProcedureMap.find(s) != ProcedureMap.end();
 }
 
 Frame GlobalEnvironment;
@@ -51,11 +43,17 @@ LispValue* eval(list<Level2Token*> tokens, Frame* frame) {
         Level2Token* crnt = tokens.front();
         if (crnt->get_type() == Level2TokenType::kIdentifier) {
             string s = crnt->get_identif_val();
-            if (Helper::IsNumber(s)) { // TODO I can pass "s" to all them and maybe make a factory
-                return new IntLispValue(stoi(s));
+            if (Helper::IsIntNumber(s)) { // TODO I can pass "s" to all them and maybe make a factory
+                return new NumberLispValue(stoi(s));
             }
-            if (IsBuiltIn(s)) {
-                return new ReservedProcedureLispValue(plusProc);
+            if (Helper::IsFloatNumber(s)) {
+                return new NumberLispValue(stof(s));
+            }
+            if (Helper::IsBoolean(s)) {
+                return new BooleanLispValue(s);
+            }
+            if (IsBuiltInFunction(s)) {
+                return new ReservedProcedureLispValue(ProcedureMap.find(s)->second);
             }
             // If nothing from above, search in frame or in GlobalEnvironment
             if (frame != nullptr) {
@@ -81,15 +79,16 @@ LispValue* eval(list<Level2Token*> tokens, Frame* frame) {
             for (it = next(tokens.begin()); it != tokens.end(); ++ it) {
                 operands_values.push_back(eval(list<Level2Token*>(1, *it), frame));
             }
+
             ProcedureLispValue* operat = dynamic_cast<ProcedureLispValue*>(eval(list<Level2Token*>(1, tokens.front()), frame));
             if (operat == nullptr) {
-                return new ErrorLispValue("Not procedure");
+                return new MessageToTheWorld("Not procedure");
             }
             return operat->take_operation(operands_values, eval);
         }
     }
 
-    return new ErrorLispValue("Unknown problem");
+    return new MessageToTheWorld("Unknown problem");
 }
 
 void InterpreterCall(string expression) {

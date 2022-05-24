@@ -6,7 +6,8 @@
 using namespace std;
 
 namespace Helper {
-    bool IsNumber(string str);
+    bool IsIntNumber(string str);
+    bool IsFloatNumber(string str);
     bool IsBoolean(string str);
     bool IsNewLineSymbol(char s);
     bool IsBlankSymbol(char s);

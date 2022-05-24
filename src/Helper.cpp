@@ -2,11 +2,23 @@
 
 namespace Helper {
 
-bool IsNumber(string str) {
+bool IsIntNumber(string str) {
     for (char c : str) {
         if (std::isdigit(c) == 0) return false;
     }
     return true;
+}
+
+bool IsFloatNumber(string str) {
+    int dot_counter = 0;
+    for (char c : str) {
+        if (c == '.') {
+            dot_counter++;
+            continue;
+        }
+        if (std::isdigit(c) == 0) return false;
+    }
+    return dot_counter == 1;
 }
 
 bool IsBoolean(string str) {

@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include "../LispValue.h"
-#include "ErrorLispValue.h"
+#include "MessageToTheWorld.h"
 #include "../../Level2Parser/Level2Parser.h"
 #include "../../Level1Parser/Level1Parser.h"
 
@@ -37,7 +37,7 @@ public:
         // TODO we really need checks here
         // 1) amount of args should be equal amount of params
         // 2) params should be identifiers, not lists
-        return new ErrorLispValue("tmp");
+        return new MessageToTheWorld("tmp");
     }
     string to_string() override {
         string str_params, str_body;

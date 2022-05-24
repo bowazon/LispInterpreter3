@@ -35,4 +35,6 @@ public:
     }
 };
 
+extern Frame GlobalEnvironment; // TODO BAD!!!
+
 #endif //LISPINTERPRETER3_FRAME_H

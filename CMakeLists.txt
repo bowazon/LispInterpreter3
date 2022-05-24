@@ -9,4 +9,4 @@ add_executable(LispInterpreter3
     main.cpp
         src/Level1Parser/Level1Parser.cpp
         src/Level1Parser/Level1Parser.h
-        src/Level1Parser/Level1Token.h src/Eval/LispValue.h src/Level2Parser/Level2Parser.h src/Level2Parser/Level2Parser.cpp src/Level2Parser/Level2Token.h src/Eval/Eval.h src/Eval/Eval.cpp src/Helper.h src/Helper.cpp src/Eval/LispValue/IntLispValue.h src/Eval/LispValue/BoolLispVal.h src/Eval/LispValue/ReservedProcedureLispValue.h src/Eval/LispValue/LambdaLispValue.h src/Eval/LispValue/ErrorLispValue.h src/Eval/Frame.h)
+        src/Level1Parser/Level1Token.h src/Eval/LispValue.h src/Level2Parser/Level2Parser.h src/Level2Parser/Level2Parser.cpp src/Level2Parser/Level2Token.h src/Eval/Eval.h src/Eval/Eval.cpp src/Helper.h src/Helper.cpp src/Eval/LispValue/NumberLispValue.h src/Eval/LispValue/BooleanLispValue.h src/Eval/LispValue/ReservedProcedureLispValue.h src/Eval/LispValue/LambdaLispValue.h src/Eval/LispValue/MessageToTheWorld.h src/Eval/Frame.h src/Eval/Reserved.h src/Eval/Reserved.cpp)
